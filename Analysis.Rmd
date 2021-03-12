@@ -39,7 +39,7 @@ Before any downstream analysis, a thorough quality control of the data has to be
 
 ## Quality Control
 
-The quality of the raw read data is performed by the Sequencing Centre and available in the fastqc reports. In this QC, a closer look at the mapped reads and the sample similariy/differences is done.
+The quality of the raw read data is performed by the Sequencing Centre and available in the fastqc reports. In this QC, a closer look at the mapped reads and the sample similarity/differences is done.
 
 After removing the transcripts without any reads mapped to them, 26579 transcripts remain for further analysis. To assess the depth of coverage, a visualization of the total number of reads mapped to the transcriptome per samples is shown in Figure \@ref(fig:barplot). There are no systematic differences between the conditions and most samples have between 20 and 30 million mapped reads (on average 25 million). This is sufficient for a proper differential experiment analysis.
 
@@ -84,11 +84,13 @@ The results of these analyses are collected in different folders under the *Diff
 
 Each of these contrast folders contains 2 folders: *DE/* and *GSEA/*.
 
-*DE/* contains a .csv file with the output of the differential expression. This file contains the log2FoldChange and p-value and adjusted p-value. For easier manipulation, this file can be imported in Excel and sorted as desired. Additionally, this folder contains a volcano plot of the contrast. An example of this type of plot is shown in Figure \@ref(fig:volcano). In these type of plots, genes in the left or right upper quadrant are the most significantly differentially expressed.
+*DE/* contains a .csv file with the output of the differential expression. This file contains - among other metrics - the log2FoldChange and p-value and adjusted p-value. For easier manipulation, this file can be imported in Excel and sorted as desired. Additionally, this folder contains a volcano plot of the contrast. An example of this type of plot is shown in Figure \@ref(fig:volcano). In these type of plots, genes in the left or right upper quadrant are the most significantly differentially expressed.
 
 ```{r volcano, out.height="90%", fig.cap = "Volcano plot of the contrast mutant versus wildtype. Each dot represents a single gene. On the X-axis the log2 FoldChange between mutant and wild-type is plotted and on the Y-axis the -log10(p-value. Absolute log2Fc of 1 are indicated as well as a significance level of 0.05. Colored in red are the genes that have an adjusted p-value smaller than 0.05 and the number of genes passing fold change and significance thresholds is indicated"}
 knitr::include_graphics("./Report/Differential_Expression/Genotype/Mutant_vs_WT/DE/Mutant_vs_WT_volcano.png")
 ```
+
+## Gene Set Enrichment Analysis
 
 The *GSEA/* folder contains the output of the gene set enrichment analyses. GSEA uses a given statistical metric comparing two conditions to rank all genes and applies a weighted Kolmogorov–Smirnov (KS) statistic to calculate an Enrichment Score (ES). Basically, ES for each set is calculated running through the entire ranked list increasing the score when a gene in the set is encountered and decreasing the score when the gene encountered is not in the analyzed set. ES of this set is the maximum difference from 0.
 
