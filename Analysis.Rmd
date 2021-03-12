@@ -106,28 +106,26 @@ Each GSEA results folder contains a .csv file containing the full results and se
 
 # Material and Methods
 
-Raw counts were processed using the R package DESeq2 (v1.30.1) as described in the vignette. GSEA was performed using the R package clusterProfiler (v3.18.1). The complete script to replicate the analysis is included in the *Report/* folder.
+Raw counts were processed using the R package DESeq2 (v1.30.1) as described in the vignette. GSEA was performed using the R package clusterProfiler (v3.18.1) and visualized using enrichplot (v1.10.2). The complete script to replicate the analysis is included in the *Report/* folder.
 
 # Deliverables
 
-The **analysis.R** file contains the code used to perform the analysis and the **Analysis.Rmd** file to create this report. It should in theory be sufficient to repeat the whole analysis. 
+The **analysis.R** and **helpers.R** file contain the code used to perform the analysis and the **Analysis.Rmd** file to create this report. It should in theory be sufficient to repeat the whole analysis. 
 
 The input files that were used for this analysis can be found in the *data/* folder:
 
 * The expression count matrix containing raw reads for all samples: **merged_gene_counts_rest.txt**
 * A metadata file describing the data: **20210302_metadata.csv**
 
-/**
-The `Results` folder contains the output created during the analysis:
+The *Report/* folder contains the output created during the analysis:
 
-* The normalized and logged count matrix called `normalized_counts_log.xlsx`
-* The R data file `fit.RDS` containing the edgeR fit
-* The four differential expression tables `Tissue_T1D_vs_ND_lfc12.xlsx`
-* A subfolder called `Figures` which contains all figures from this report in PDF format
-* The `GSEA` folder containing the GSEA output (as described above; best to check the `html` file in each subfolder first...)
+* 2 folders: *Differential_Expression/* and *QC/*
+* The *QC/* folder contains figures describing the data quality anf basic statistics.
+* The *Differential_Expression/* contains all the differential expression (volcano plot and csv of per-gene statistics) and gsea results grouped per comparison. 
+* the GSEA results are grouped per ranking method (log2Fc and signed_Pval) and gene set collection (GO or KEGG). Results are plotted in several ways and a csv of full results is included.
 
-The `tex_files` folder contains configuration files for the proper rendering of the report.
-**/
+The *tex_files/* folder contains configuration files for the proper rendering of the report.
+
 
 # Data Responsibility
 

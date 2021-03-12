@@ -6,6 +6,7 @@ suppressMessages(library("pheatmap"))
 suppressMessages(library("RColorBrewer"))
 suppressMessages(library("org.Dr.eg.db"))
 suppressMessages(library("clusterProfiler"))
+suppressMessages(library("enrichplot"))
 
 source("helpers.R")
 
