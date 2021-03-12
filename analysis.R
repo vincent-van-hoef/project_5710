@@ -20,13 +20,13 @@ source("helpers.R")
 # Load data #
 #############
 
-res_dir <- paste0(proj_dir, "Report/")
+res_dir <- paste0(proj_dir, "/Report/")
 unlink(res_dir, recursive = TRUE)
 dir.create(res_dir, showWarnings = FALSE)
 
 # Load datasets, make sure sample names are the same in data and meta
-cts   <- read.csv(paste0(proj_dir, "data/merged_gene_counts_rest.txt"), sep = "\t", row.names = 1, check.names = FALSE)
-meta   <- read.csv(paste0(proj_dir, "data/20210302_metadata.csv"), sep = ";", row.names = 1)
+cts   <- read.csv(paste0(proj_dir, "/data/merged_gene_counts_rest.txt"), sep = "\t", row.names = 1, check.names = FALSE)
+meta   <- read.csv(paste0(proj_dir, "/data/20210302_metadata.csv"), sep = ";", row.names = 1)
 meta$Group <- paste0("Group_", meta$Group )
 meta$Genotype <- gsub("-", "", meta$Genotype)
 meta$samples     <- rownames(meta)
