@@ -74,10 +74,11 @@ The differentially expressed (DE) genes were identified by following the [DESeq2
   - Group1 versus Group3
   - Group2 versus Group3
 * Group1_Excl:
+^[The *Excl* indicates that one sample has been removed for this comparison - as has been described in the metadata excel.]
   - Group1_Excl versus Group2
 * Group2_Excl:
   - Group1 versus Group2_Excl
-* Group12
+* Group12_Excl
   - Group1_Excl versus Group2_Excl
 
 The results of these analyses are collected in different folders under the *Differential_Expression/* folder in the *Report/* directory.
