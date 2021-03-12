@@ -8,15 +8,15 @@ suppressMessages(library("org.Dr.eg.db"))
 suppressMessages(library("clusterProfiler"))
 suppressMessages(library("enrichplot"))
 
+# Set working directory
+proj_dir <- dirname(sys.frame(1)$ofile)
+setwd(proj_dir)
+
 source("helpers.R")
 
 #############
 # Load data #
 #############
-
-# Set working directory
-proj_dir <- "/Users/vinva957/Desktop/NBIS/Projects/project_5710/"
-setwd(proj_dir)
 
 res_dir <- paste0(proj_dir, "Report/")
 unlink(res_dir, recursive = TRUE)
