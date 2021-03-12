@@ -86,7 +86,7 @@ Each of these contrast folders contains 2 folders: *DE/* and *GSEA/*.
 
 *DE/* contains a .csv file with the output of the differential expression. This file contains - among other metrics - the log2FoldChange and p-value and adjusted p-value. For easier manipulation, this file can be imported in Excel and sorted as desired. Additionally, this folder contains a volcano plot of the contrast. An example of this type of plot is shown in Figure \@ref(fig:volcano). In these type of plots, genes in the left or right upper quadrant are the most significantly differentially expressed.
 
-```{r volcano, out.height="90%", fig.cap = "Volcano plot of the contrast mutant versus wildtype. Each dot represents a single gene. On the X-axis the log2 FoldChange between mutant and wild-type is plotted and on the Y-axis the -log10(p-value. Absolute log2Fc of 1 are indicated as well as a significance level of 0.05. Colored in red are the genes that have an adjusted p-value smaller than 0.05 and the number of genes passing fold change and significance thresholds is indicated"}
+```{r volcano, out.height="90%", fig.cap = "Volcano plot of the contrast mutant versus wildtype. Each dot represents a single gene. On the X-axis the log2 FoldChange between mutant and wild-type is plotted and on the Y-axis the -log10(p-value. Log2FC of 1 and -1 are indicated as well as a significance level of 0.05. Colored in red are the genes that have an adjusted p-value smaller than 0.05 and the number of genes passing fold change and significance thresholds is indicated"}
 knitr::include_graphics("./Report/Differential_Expression/Genotype/Mutant_vs_WT/DE/Mutant_vs_WT_volcano.png")
 ```
 
