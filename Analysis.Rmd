@@ -15,10 +15,12 @@ output:
 
 ```{r load_section, include=FALSE}
 require("knitr")
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, cache = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, 
+                      message = FALSE, 
+                      cache = FALSE, 
+                      warning = FALSE)
 knitr::opts_knit$set(eval.after = "fig.cap")
 ```
-
 
 # Support Request
 
@@ -33,7 +35,11 @@ A contract for 40 hours was set up for:
 
 # Results
 
+Before any downstream analysis, a thorough quality control of the data has to be performed to make sure no technical artifacts will influence the differential expression results.
+
 ## Quality Control
+
+The quality of the raw read data is performed by the Sequencing Centre and available in the fastqc reports. In this QC, a closer look at the mapped reads and the sample similariy/differences is done.
 
 After removing the transcripts without any reads mapped to them, 26579 transcripts remain for further analysis. To assess the depth of coverage, a visualization of the total number of reads mapped to the transcriptome per samples is shown in Figure \@ref(fig:barplot). There are no systematic differences between the conditions and most samples have between 20 and 30 million mapped reads (on average 25 million). This is sufficient for a proper differential experiment analysis.
 
@@ -41,7 +47,7 @@ After removing the transcripts without any reads mapped to them, 26579 transcrip
 knitr::include_graphics("./Report/QC/barplot_raw_counts.pdf")
 ```
 
-We can further have a look at the distribution of the reads per transcript per sample before and after normalization (see Figure \@ref(fig:boxplots)). Small differences in distribution can be seen before normalization, although not very large and not systematic. After normalization, the distributions are very comparable between the samples. This is a requirement for a valide differential expression analysis. 
+We can further have a look at the distribution of the reads per transcript per sample before and after normalization (see Figure \@ref(fig:boxplots)). Normalization methods are standardly applied with the intent of reducing the non-biologically derived variability inherent in transcriptomic measurements, mainly as a consequence of the different sequencing depths per sample. In this dataset, small differences in distribution can be seen before normalization, although not very large and not systematic. After normalization, the distributions are very comparable between the samples. This is a requirement for a valid differential expression analysis. 
 
 ```{r boxplots, out.width="49%", fig.cap="Boxplots of the log2(counts+1) per sample; befroe normalization (Left) and after normalization using rlog (Right).",fig.show='hold',fig.align='center'}
 knitr::include_graphics(c("./Report/QC/boxplot_raw_counts.pdf","./Report/QC/boxplot_normalized_counts.pdf"))
@@ -103,10 +109,9 @@ When it comes to the gene sets to be tested, we use two common sets of genes (i.
 
 Each GSEA results folder contains a .csv file containing the full results and several different visualizations of the top20 terms. In the *GSEA_PLOTS/* folder you can find a visualization of the location of the genes in the ranked gene list and the ES calculation.
 
-
 # Material and Methods
 
-Raw counts were processed using the R package DESeq2 (v1.30.1) as described in the vignette. GSEA was performed using the R package clusterProfiler (v3.18.1) and visualized using enrichplot (v1.10.2). The complete script to replicate the analysis is included in the *Report/* folder.
+Raw counts were processed using the R package DESeq2 (v1.30.1) as described in the vignette. GSEA was performed using the R package clusterProfiler (v3.18.1) and visualized using enrichplot (v1.10.2). The complete script to replicate the analysis is included in the result folder.
 
 # Deliverables
 
@@ -120,12 +125,11 @@ The input files that were used for this analysis can be found in the *data/* fol
 The *Report/* folder contains the output created during the analysis:
 
 * 2 folders: *Differential_Expression/* and *QC/*
-* The *QC/* folder contains figures describing the data quality anf basic statistics.
+* The *QC/* folder contains figures describing the data quality and basic statistics.
 * The *Differential_Expression/* contains all the differential expression (volcano plot and csv of per-gene statistics) and gsea results grouped per comparison. 
 * the GSEA results are grouped per ranking method (log2Fc and signed_Pval) and gene set collection (GO or KEGG). Results are plotted in several ways and a csv of full results is included.
 
-The *tex_files/* folder contains configuration files for the proper rendering of the report.
-
+The *tex_files/* folder contains configuration files for the proper rendering of the report and should not be modified.
 
 # Data Responsibility
 
