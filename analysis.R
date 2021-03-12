@@ -1,3 +1,5 @@
+# This is the analysis script for project #5710. This should be sourced before compiling the .Rmd report.
+
 # Load packages
 suppressMessages(library("ggplot2"))
 suppressMessages(library("tidyr"))
