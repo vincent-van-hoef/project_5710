@@ -53,7 +53,7 @@ Another way to visualize the data structure is to perform a Principal Component 
 knitr::include_graphics("/Users/vinva957/Desktop/NBIS/Projects/project_5710/Report/QC/PCA_rlog_top100.pdf")
 ```
 
-The figures of this QC can be found in the *QC/* folder in the *Report/* directory.
+The figures of this QC can be found in the *QC/* folder in the *Report/* directory. They also include PCa plots for a different number of variable genes.
 
 ## Differential Expression
 
