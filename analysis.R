@@ -157,6 +157,8 @@ for (design in names(designList)){
     
     comp <- designList[[design]][["Contrast"]][[contrast]]
     res <- results(dds, contrast = comp)
+    res$Symbol <- mapIds(org.Dr.eg.db, keys = rownames(res), keytype = "ENSEMBL", column = "SYMBOL")
+    res <- res[order(res$padj),]
     write.csv(res, paste0(diff_exp_dir, paste(comp, collapse="_"), ".csv"))
     
     png(paste0(diff_exp_dir, contrast, "_volcano.png"))
