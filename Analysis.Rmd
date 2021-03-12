@@ -1,0 +1,156 @@
+---
+urlcolor: blue
+link-citations: yes
+output: 
+  bookdown::pdf_document2:
+    keep_tex: false
+    latex_engine: lualatex
+    citation_package: natbib
+    fig_caption: yes
+    includes:
+      in_header: "tex_files/header.tex"
+      before_body: "tex_files/before_body.tex"
+      after_body: "tex_files/after_body.tex"
+---
+
+```{r load_section, include=FALSE}
+require("knitr")
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, cache = FALSE, warning = FALSE, fig.path = "Results/Figures/")
+knitr::opts_knit$set(eval.after = "fig.cap")
+```
+
+
+# Support Request
+
+Leptin is a metabolic hormone essential for reproduction in mammals, but its role in the regulation of the reproductive physiology of zebrafish is still unknown. Our aim is to get insights into those factors, which are regulated by leptin and can affect final maturation of the follicles and ovulation in zebrafish, mainly by differentially gene expression analysis. Therefore, we have collected RNA sequencing data (pair end reads from 15 samples in total) from fully grown follicles, isolated from wild type and leptin receptor mutant female zebrafish.
+
+A contract for 40 hours was set up for:
+
+* Filtering and Normalization
+* Quality check and Exploratory analysis (PCA, ...)
+* Differential Expression (all groups and selected combinations)
+* Gene Set Enrichment Analysis (GSEA) using the GO and KEGG gene set collections
+
+# Results
+
+## Quality Control
+
+After removing the transcripts without any reads mapped to them, 26579 transcripts remain for further analysis. To assess the depth of coverage, a visualization of the total number of reads mapped to the transcriptome per samples is shown in Figure \@ref(fig:barplot). There are no systematic differences between the genotypes and most samples have between 20 and 30 million mapped reads (on average 25 million). This is sufficient for a proper differential experiment analysis.
+
+```{r barplot, out.height="300px", fig.cap="Barplot of the number of mapped reads per sample. Samples are colored by genotype and the average number is indicated with horizontal line."}
+knitr::include_graphics("/Users/vinva957/Desktop/NBIS/Projects/project_5710/Report/QC/barplot_raw_counts.pdf")
+```
+
+We can further have a look at the distribution of the reads per transcript per sample before and after normalization (see Figure \@ref(fig:boxplots)). Small differences in distribution can be seen before normalization, although not very large and not systematic. After normalization, the distributions are very comparable between the samples. This is a requirement for a valide differential expression analysis. 
+
+```{r boxplots, out.width="49%", fig.cap="Boxplots of the log2(counts+1) per sample; befroe normalization (Left) and after normalization using rlog (Right).",fig.show='hold',fig.align='center'}
+knitr::include_graphics(c("/Users/vinva957/Desktop/NBIS/Projects/project_5710/Report/QC/boxplot_raw_counts.pdf","/Users/vinva957/Desktop/NBIS/Projects/project_5710/Report/QC/boxplot_normalized_counts.pdf"))
+```
+
+Another way to visualize the data structure is to perform a Principal Component Analysis (PCA). Using [PCA](http://setosa.io/ev/principal-component-analysis), we examine the structure of the data by projecting the samples on a two-dimensional graph using the two first principal components that explain the most variation between those samples. In Figure \@ref(fig:pca), each point corresponds to a sample plotted on PC1 and PC2. The plot can be used to examine the samples for outliers, sample swaps and other relationships. When normalization successfully removed technical artefacts, the relative distances should be biologically interpretable. In Figure \@ref(fig:pca), a PCA analysis on the 100 most variable genes accross all samples reveals that the samples can be separated between mutant and wild-type on the second component. Variation on PC1 is driven by other (unknown?) factors.
+
+```{r pca, fig.cap = "Visualization of PC1 and PC2 from a PCA using the 100 most variable genes. Coloured according to the Group factor in the metadata."}
+knitr::include_graphics("/Users/vinva957/Desktop/NBIS/Projects/project_5710/Report/QC/PCA_rlog_top100.pdf")
+```
+
+The figures of this QC can be found in the *QC/* folder in the *Report/* directory.
+
+## Differential Expression
+
+The differentially expressed (DE) genes were identified by following the [DESeq2](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html) pipeline. Different contrasts were examined:
+
+* Genotype: 
+  - Mutant versus Wild-type
+* EggNumber: 
+  - High versus Low
+* Groups_Allsamp: 
+  - Group1 versus Group2
+  - Group1 versus Group3
+  - Group2 versus Group3
+* Group1_Excl:
+  - Group1_Excl versus Group2
+* Group2_Excl:
+  - Group1 versus Group2_Excl
+* Group12
+  - Group1_Excl versus Group2_Excl
+
+The results of these analyses are collected in different folders under the *Differential_Expression/* folder in the *Report/* directory.
+
+Each of these contrast folders contains 2 folders: *DE/* and *GSEA/*.
+
+*DE/* contains a .csv file with the output of the differential expression. This file contains the log2FoldChange and p-value and adjusted p-value. For easier manipulation, this file can be imported in Excel and sorted as desired. Additionally, this folder contains a volcano plot of the contrast. An example of this type of plot is shown in Figure \@ref(fig:volcano). In these type of plots, genes in the left or right upper quadrant are the most significantly differentially expressed.
+
+```{r volcano, out.height="90%", fig.cap = "Volcano plot of the contrast mutant versus wildtype. Each dot represents a single gene. On the X-axis the log2 FoldChange between mutant and wild-type is plotted and on the Y-axis the -log10(p-value. Absolute log2Fc of 1 are indicated as well as a significance level of 0.05. Colored in red are the genes that have an adjusted p-value smaller than 0.05 and the number of genes passing fold change and significance thresholds is indicated"}
+knitr::include_graphics("/Users/vinva957/Desktop/NBIS/Projects/project_5710/Report/Differential_Expression/Genotype/Mutant_vs_WT/DE/Mutant_vs_WT_volcano.png")
+```
+
+The *GSEA/* folder contains the output of the gene set enrichment analyses. GSEA uses a given statistical metric comparing two conditions to rank all genes and applies a weighted Kolmogorov–Smirnov (KS) statistic to calculate an Enrichment Score (ES). Basically, ES for each set is calculated running through the entire ranked list increasing the score when a gene in the set is encountered and decreasing the score when the gene encountered is not in the analyzed set. ES of this set is the maximum difference from 0.
+
+Calculate an Enrichment Score:
+
+* Rank genes by a statistic (e.g. log2FoldChange)
+* Compute cumulative sum over ranked genes:
+  - Increase sum when gene in set, decrease it otherwise. 
+  - Magnitude of increment depends on correlation of gene
+with phenotype.
+* Record the maximum deviation from zero as the enrichment score (ES)
+
+The ES and NES (ES normalized for set size) of a set are calculated by looking at where the statistics of genes belonging to a certain set can be found in the ranked gene list. A high (N)ES indicates these genes are found high up in the list. In other words, a high (N)ES value means that for the genes in this set there is - on average - a shift towards a higher expression. The significance of each (N)ES is calculated permuting the sets and recomputing ES, getting a null distribution for the ES. A multiple comparison correction is also performed on the p values. More info can be found [here](https://bioinformatics.mdanderson.org/MicroarrayCourse/Lectures09/gsea1_bw.pdf).
+
+In this projects we used two different statistics to rank the genes. One, a basic log2FC between the two conditions of the contrast (can be found in the *Log2FC/* folder). Two, sign(log2FC)* -log10(p value) in the *signed_Pval/* folder. The first metric focuses more on the size of the DE while the second one is more focused on significance. Both metrics are often used in these types of analyses and can give complementary results. I would suggest to have a look at both sets of results and see which one makes more sense in this experiment.
+
+When it comes to the gene sets to be tested, we use two common sets of genes (i.e. the GO and KEGG collection). The GO collection is divided in three different biological "themes": BP or Biological Product, MF or Molecular Function and CC or Cellular Compartment. These contain different types of gene sets and have been tested separately. Results can be found in the respective folders.
+
+Each GSEA results folder contains a .csv file containing the full results and several different visualizations of the top20 terms. In the *GSEA_PLOTS/* folder you can find a visualization of the location of the genes in the ranked gene list and the ES calculation.
+
+
+# Material and Methods
+
+Raw counts were processed using the R package DESeq2 (v1.30.1) as described in the vignette. GSEA was performed using the R package clusterProfiler (v3.18.1). The complete script to replicate the analysis is included in the *Report/* folder.
+
+# Deliverables
+
+The **analysis.R** file contains the code used to perform the analysis and the **Analysis.Rmd** file to create this report. It should in theory be sufficient to repeat the whole analysis. 
+
+The input files that were used for this analysis can be found in the *data/* folder:
+
+* The expression count matrix containing raw reads for all samples: **merged_gene_counts_rest.txt**
+* A metadata file describing the data: **20210302_metadata.csv**
+
+/**
+The `Results` folder contains the output created during the analysis:
+
+* The normalized and logged count matrix called `normalized_counts_log.xlsx`
+* The R data file `fit.RDS` containing the edgeR fit
+* The four differential expression tables `Tissue_T1D_vs_ND_lfc12.xlsx`
+* A subfolder called `Figures` which contains all figures from this report in PDF format
+* The `GSEA` folder containing the GSEA output (as described above; best to check the `html` file in each subfolder first...)
+
+The `tex_files` folder contains configuration files for the proper rendering of the report.
+**/
+
+# Data Responsibility
+
+* __NBIS & Uppnex__ Unfortunately, we do not have resources to keep any files associated with the support request. We suggest that you safely store the results delivered by us. In addition, we ask that you remove the files from UPPMAX/UPPNEX after analysis is completed. The main storage at UPPNEX is optimized for high-speed and parallel access, which makes it expensive and not the right place for long time archiving.
+* __Sensitive data__ Please note that special considerations may apply to the human-derived sensitive personal data. These should be handled according to specific laws and regulations as outlined e.g. here
+* __Long-term backup__ The responsibility for data archiving lies with universities and we recommend asking your local IT for support with long-term data archiving. Also a newly established Data Office at SciLifeLab may be of help to discuss other options.
+
+# Acknowledgements
+
+If you are presenting the results in a paper, at a workshop or conference, we kindly ask you to acknowledge us.
+
+* __NBIS Staff__ are encouraged to be co-authors when this is merited in accordance to the ethical recommendations for authorship, e.g. [ICMJE recommendations](http://www.icmje.org/recommendations/browse/roles-and-responsibilities/defining-the-role-of-authors-and-contributors.html). If applicable, please include __Name, Surname, National Bioinformatics Infrastructure Sweden, Science for Life Laboratory, Further Affliations__, as co-author. In other cases, NBIS would be grateful if support by us is acknowledged in publications according to this example: ["Support by NBIS (National Bioinformatics Infrastructure Sweden) is gratefully acknowledged"](https://www.nbis.se/resources/support.html).
+
+* __UPPMAX__ If your project has used HPC resources we kindly asks you to acknowledge UPPMAX and SNIC. If applicable, please add: ["The computations were performed on resources provided by SNIC through Uppsala Multidisciplinary Center for Advanced Computational Science (UPPMAX) under Project SNIC XXXX/Y-ZZZ"](https://www.uppmax.uu.se/support/faq/general-miscellaneous-faq/acknowledging-uppmax--snic--and-uppnex/).
+
+* __NGI__ In publications based on data from NGI Sweden, the authors must acknowledge SciLifeLab, NGI and UPPMAX: ["The authors would like to acknowledge support from Science for Life Laboratory, the National Genomics Infrastructure, NGI, and Uppmax for providing assistance in massive parallel sequencing and computational infrastructure"](https://ngisweden.scilifelab.se/info/faq#how-do-i-acknowledge-ngi-in-my-publication).
+
+# Closing Procedures
+
+You should soon be contacted by one of our managers, Jessica Lindvall (jessica.lindvall@nbis.se) or Henrik Lantz (henrik.lantz@nbis.se), with a request to close down the project in our internal system and for invoicing matters. If we do not hear from you within __30 days__ the project will be automatically closed and invoice sent. Again, we would like to remind you about data responsibility and acknowledgements, see Data Responsibility and Acknowledgments sections.
+
+You are naturally more than welcome to come back to us with further data analysis request at any time via [NBIS support](http://nbis.se/support/support.html).
+
+Thank you for using NBIS and all the best for future research.
+
+# Bibliography
