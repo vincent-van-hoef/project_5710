@@ -10,16 +10,18 @@ suppressMessages(library("org.Dr.eg.db"))
 suppressMessages(library("clusterProfiler"))
 suppressMessages(library("enrichplot"))
 
-# Set working directory
+# Set working directory to script location
 proj_dir <- dirname(sys.frame(1)$ofile)
 setwd(proj_dir)
 
+# Load several custom functions
 source("helpers.R")
 
 #############
 # Load data #
 #############
 
+# Set up a report folder, remove existing ones first
 res_dir <- paste0(proj_dir, "/Report/")
 unlink(res_dir, recursive = TRUE)
 dir.create(res_dir, showWarnings = FALSE)
@@ -50,6 +52,7 @@ dds <- dds[keep,]
 # Quality Control #
 ###################
 
+# Create a QC folder in the Report dir
 qc_dir <- paste0(res_dir, "QC/")
 dir.create(qc_dir, showWarnings = FALSE)
 
@@ -83,7 +86,6 @@ ggsave(paste0(qc_dir, "PCA_rlog_top500.pdf"), plot = p2)
 p3    <- plotPCA(rld, intgroup = "Group", ntop = 1000)
 ggsave(paste0(qc_dir, "PCA_rlog_top1000.pdf"), plot = p3)
 
-
 # Create boxplot of logged raw counts: are there big differences in the library size?
 pdf(paste0(qc_dir, "boxplot_normalized_counts.pdf"))
 par(mar=c(6,8,2,2))
@@ -108,11 +110,11 @@ pheatmap(sampleDistMatrix,
          col = colors)
 dev.off()
 
-
 ###########################
 # Differential Expression #
 ###########################
 
+# Create a differential expression result folder
 de_dir <- paste0(res_dir, "Differential_Expression/")
 dir.create(de_dir, showWarnings = FALSE)
 
@@ -136,8 +138,7 @@ designList   <- list(Genotype = list(Model = "~ 0 + Genotype",
                      Group12_Excl = list(Model = "~ 0 + Group12_Excl",
                                         Contrast = list("Group1_Excl_vs_Group2_Excl" = c("Group12_Excl", "Group_1", "Group_2"))))
 
-
-
+# Run DE and plotting function over each comparison in the designlist
 for (design in names(designList)){
   
   design_dir <- paste0(de_dir, design, "/")
@@ -150,29 +151,45 @@ for (design in names(designList)){
   # Create results for each contrast in design parameter
   for(contrast in names(designList[[design]][["Contrast"]])) {
     
+    # Make separate folder for each contrast
     contrast_dir <- paste0(design_dir, contrast, "/")
     dir.create(contrast_dir, showWarnings = FALSE)
     
+    # create DE folder in each contrast folder
     diff_exp_dir <- paste0(contrast_dir, "DE/")
     dir.create(diff_exp_dir, showWarnings = FALSE)
     
-    
+    # Extract the comparison for plotting purposes
     comp <- designList[[design]][["Contrast"]][[contrast]]
+
+    # Extract results
     res <- results(dds, contrast = comp)
+
+    # Convert ensembl id to symbols
     res$Symbol <- mapIds(org.Dr.eg.db, keys = rownames(res), keytype = "ENSEMBL", column = "SYMBOL")
     res <- res[order(res$padj),]
     write.csv(res, paste0(diff_exp_dir, paste(comp, collapse="_"), ".csv"))
     
+    # Create volcano plot
     png(paste0(diff_exp_dir, contrast, "_volcano.png"))
     p1 <- volcano_fun_p(res, fc = 1, sig = 0.05)
     print(p1)
     dev.off()
-    
-    # GSEA Enrichment
+
+    ##################
+    # GSEA Enrichment#
+    ##################
+
     # Log2Fc statistic
+    ##################
+    
     genelist <- sort(setNames(res$log2FoldChange, rownames(res)), decreasing = TRUE)
+    
     # genelist names should be entrezid
-    names(genelist) <- mapIds(org.Dr.eg.db, keys = names(genelist), column = "ENTREZID", keytype = "ENSEMBL")
+    names(genelist) <- mapIds(org.Dr.eg.db, 
+                              keys = names(genelist), 
+                              column = "ENTREZID", 
+                              keytype = "ENSEMBL")
     genelist <- genelist[!is.na(names(genelist))]
     
     # GO BP Enrichment
@@ -219,10 +236,15 @@ for (design in names(designList)){
                   org = "dre",
                   orgdb = org.Dr.eg.db)
     
-    # sign(Log2Fc)*-log10(Pvalue) statistic
+    # sign(Log2Fc)*-log10(Pvalue)
+    #############################
+
     genelist <- sort(setNames(sign(res$log2FoldChange)*-log10(res$pvalue), rownames(res)), decreasing = TRUE)
     # genelist names should be entrezid
-    names(genelist) <- mapIds(org.Dr.eg.db, keys = names(genelist), column = "ENTREZID", keytype = "ENSEMBL")
+    names(genelist) <- mapIds(org.Dr.eg.db, 
+                                keys = names(genelist), 
+                                column = "ENTREZID", 
+                                keytype = "ENSEMBL")
     genelist <- genelist[!is.na(names(genelist))]
     
     # GO BP Enrichment
