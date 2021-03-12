@@ -35,7 +35,7 @@ A contract for 40 hours was set up for:
 
 ## Quality Control
 
-After removing the transcripts without any reads mapped to them, 26579 transcripts remain for further analysis. To assess the depth of coverage, a visualization of the total number of reads mapped to the transcriptome per samples is shown in Figure \@ref(fig:barplot). There are no systematic differences between the genotypes and most samples have between 20 and 30 million mapped reads (on average 25 million). This is sufficient for a proper differential experiment analysis.
+After removing the transcripts without any reads mapped to them, 26579 transcripts remain for further analysis. To assess the depth of coverage, a visualization of the total number of reads mapped to the transcriptome per samples is shown in Figure \@ref(fig:barplot). There are no systematic differences between the conditions and most samples have between 20 and 30 million mapped reads (on average 25 million). This is sufficient for a proper differential experiment analysis.
 
 ```{r barplot, out.height="300px", fig.cap="Barplot of the number of mapped reads per sample. Samples are colored by genotype and the average number is indicated with horizontal line."}
 knitr::include_graphics("./Report/QC/barplot_raw_counts.pdf")
