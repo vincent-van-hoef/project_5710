@@ -38,19 +38,19 @@ A contract for 40 hours was set up for:
 After removing the transcripts without any reads mapped to them, 26579 transcripts remain for further analysis. To assess the depth of coverage, a visualization of the total number of reads mapped to the transcriptome per samples is shown in Figure \@ref(fig:barplot). There are no systematic differences between the genotypes and most samples have between 20 and 30 million mapped reads (on average 25 million). This is sufficient for a proper differential experiment analysis.
 
 ```{r barplot, out.height="300px", fig.cap="Barplot of the number of mapped reads per sample. Samples are colored by genotype and the average number is indicated with horizontal line."}
-knitr::include_graphics("/Report/QC/barplot_raw_counts.pdf")
+knitr::include_graphics("./Report/QC/barplot_raw_counts.pdf")
 ```
 
 We can further have a look at the distribution of the reads per transcript per sample before and after normalization (see Figure \@ref(fig:boxplots)). Small differences in distribution can be seen before normalization, although not very large and not systematic. After normalization, the distributions are very comparable between the samples. This is a requirement for a valide differential expression analysis. 
 
 ```{r boxplots, out.width="49%", fig.cap="Boxplots of the log2(counts+1) per sample; befroe normalization (Left) and after normalization using rlog (Right).",fig.show='hold',fig.align='center'}
-knitr::include_graphics(c("/Report/QC/boxplot_raw_counts.pdf","/Report/QC/boxplot_normalized_counts.pdf"))
+knitr::include_graphics(c("./Report/QC/boxplot_raw_counts.pdf","./Report/QC/boxplot_normalized_counts.pdf"))
 ```
 
 Another way to visualize the data structure is to perform a Principal Component Analysis (PCA). Using [PCA](http://setosa.io/ev/principal-component-analysis), we examine the structure of the data by projecting the samples on a two-dimensional graph using the two first principal components that explain the most variation between those samples. In Figure \@ref(fig:pca), each point corresponds to a sample plotted on PC1 and PC2. The plot can be used to examine the samples for outliers, sample swaps and other relationships. When normalization successfully removed technical artefacts, the relative distances should be biologically interpretable. In Figure \@ref(fig:pca), a PCA analysis on the 100 most variable genes accross all samples reveals that the samples can be separated between mutant and wild-type on the second component. Variation on PC1 is driven by other (unknown?) factors.
 
 ```{r pca, fig.cap = "Visualization of PC1 and PC2 from a PCA using the 100 most variable genes. Coloured according to the Group factor in the metadata."}
-knitr::include_graphics("/Report/QC/PCA_rlog_top100.pdf")
+knitr::include_graphics("./Report/QC/PCA_rlog_top100.pdf")
 ```
 
 The figures of this QC can be found in the *QC/* folder in the *Report/* directory. They also include PCa plots for a different number of variable genes.
@@ -81,7 +81,7 @@ Each of these contrast folders contains 2 folders: *DE/* and *GSEA/*.
 *DE/* contains a .csv file with the output of the differential expression. This file contains the log2FoldChange and p-value and adjusted p-value. For easier manipulation, this file can be imported in Excel and sorted as desired. Additionally, this folder contains a volcano plot of the contrast. An example of this type of plot is shown in Figure \@ref(fig:volcano). In these type of plots, genes in the left or right upper quadrant are the most significantly differentially expressed.
 
 ```{r volcano, out.height="90%", fig.cap = "Volcano plot of the contrast mutant versus wildtype. Each dot represents a single gene. On the X-axis the log2 FoldChange between mutant and wild-type is plotted and on the Y-axis the -log10(p-value. Absolute log2Fc of 1 are indicated as well as a significance level of 0.05. Colored in red are the genes that have an adjusted p-value smaller than 0.05 and the number of genes passing fold change and significance thresholds is indicated"}
-knitr::include_graphics("/Report/Differential_Expression/Genotype/Mutant_vs_WT/DE/Mutant_vs_WT_volcano.png")
+knitr::include_graphics("./Report/Differential_Expression/Genotype/Mutant_vs_WT/DE/Mutant_vs_WT_volcano.png")
 ```
 
 The *GSEA/* folder contains the output of the gene set enrichment analyses. GSEA uses a given statistical metric comparing two conditions to rank all genes and applies a weighted Kolmogorov–Smirnov (KS) statistic to calculate an Enrichment Score (ES). Basically, ES for each set is calculated running through the entire ranked list increasing the score when a gene in the set is encountered and decreasing the score when the gene encountered is not in the analyzed set. ES of this set is the maximum difference from 0.
