@@ -100,13 +100,13 @@ gsea_kegg_viz <- function(geneList = genelist,
   
   
   # Dotplot
-  pdf(paste0(outdir, paste(comp, collapse="_"), "_KEGG_", go_class, "_dotplot.pdf"))
+  pdf(paste0(outdir, paste(comp, collapse="_"), "_KEGG_dotplot.pdf"))
   print(dotplot(res_gsea, showCategory=n_terms, font.size=10, color = "pvalue", x = "NES"))
   dev.off()
   
   # Enrichment map
   emap <- enrichplot::pairwise_termsim(res_gsea, method = "JC", semData = NULL, showCategory = n_terms)
-  pdf(paste0(outdir, paste(comp, collapse="_"), "_KEGG_", go_class, "_emap.pdf"))
+  pdf(paste0(outdir, paste(comp, collapse="_"), "_KEGG_emap.pdf"))
   print(emapplot(emap, showCategory=n_terms, layout = "kk", color = "pvalue"))
   dev.off()
   
@@ -114,7 +114,7 @@ gsea_kegg_viz <- function(geneList = genelist,
   dir_gsea <- paste0(outdir, "GSEA_PLOTS/")
   dir.create(dir_gsea, showWarnings = FALSE, recursive = TRUE)
   for(i in 1:n_terms){
-    pdf(paste0(dir_gsea, paste(comp, collapse="_"), "_KEGG_", go_class, "_gseaplot_", gsub(" |/", "_", substr(res_gsea$Description[i], 0, 15)),  ".pdf"))
+    pdf(paste0(dir_gsea, paste(comp, collapse="_"), "_KEGG_gseaplot_", gsub(" |/", "_", substr(res_gsea$Description[i], 0, 15)),  ".pdf"))
     print(gseaplot2(res_gsea, geneSetID = i, title = res_gsea$Description[i]))
     dev.off()
   }
